@@ -1,14 +1,35 @@
+import { useAuth } from "@/hooks/useAuth";
 import { BriefcaseIcon, EmailIcon, InfoIcon, LockIcon, ShieldIcon, UserIcon, UserShieldIcon } from "@/lib/utils/Icons";
 import { Feather } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 
 export default function Signup() {
+    const router = useRouter();
+
     const [secure, setSecure] = useState(true);
+    const [fullName, setFullName] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const { role } = useLocalSearchParams<{ role?: string }>();
+
+
+    const [fullNameError, setFullNameError] = useState<string | null>(null);
+    const [emailError, setEmailError] = useState<string | null>(null);
+    const [passwordError, setPasswordError] = useState<string | null>(null);
+
+
+    const fullNameRegex =
+    /^[A-Za-z]{2,}(?:\s[A-Za-z]{2,})+$/;
+    
+    const emailRegex =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    const strongPasswordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
     
     const calculatePasswordStrength = (password: string) => {
       let score = 0;
@@ -42,6 +63,71 @@ export default function Signup() {
       }
       return "#E5E7EB"; // gray
     };
+
+    const validate = () => {
+      let valid = true;
+    
+      // Full name
+      if (!fullName.trim()) {
+        setFullNameError("Full name is required");
+        valid = false;
+      } else if (!fullNameRegex.test(fullName.trim())) {
+        setFullNameError("Enter first and father name (letters only)");
+        valid = false;
+      } else {
+        setFullNameError(null);
+      }
+    
+      // Email
+      if (!email) {
+        setEmailError("Email is required");
+        valid = false;
+      } else if (!emailRegex.test(email)) {
+        setEmailError("Enter a valid email address");
+        valid = false;
+      } else {
+        setEmailError(null);
+      }
+    
+      // Password
+      if (!password) {
+        setPasswordError("Password is required");
+        valid = false;
+      } else if (!strongPasswordRegex.test(password)) {
+        setPasswordError(
+          "Password must be 8+ chars with upper, lower, number & symbol"
+        );
+        valid = false;
+      } else {
+        setPasswordError(null);
+      }
+    
+      return valid;
+    };
+    
+
+    const { signup, error, loading } = useAuth();
+
+    const handleSignup = async () => {
+      const isValid = validate();
+      if (!isValid) return;
+    
+      const res = await signup(
+        fullName.trim(),
+        email.trim(),
+        password,
+        role as "ENTREPRENEUR" | "INVESTOR"
+      );
+    
+      if (res?.success) {
+        router.push({
+          pathname: "/verify-email",
+          params: { email },
+        });
+      }
+    };
+    
+    
   return (
     <SafeAreaView style={{flex: 1, paddingHorizontal: 20, paddingBottom: 20, backgroundColor: "#FFFFFF",}}>
 
@@ -76,8 +162,19 @@ export default function Signup() {
           <View style={styles.iconLeft}>
             <UserIcon />
           </View>
-          <TextInput placeholder="John Doe" placeholderTextColor="#9CA3AF" style={styles.input}/>
+          <TextInput value={fullName} onChangeText={setFullName} placeholder="John Doe" placeholderTextColor="#9CA3AF" 
+          style={[
+            styles.input,
+            fullNameError && { borderColor: "#DC2626" }
+          ]}
+          />
         </View>
+        {fullNameError && (
+          <Text style={{ color: "#DC2626", fontSize: 12, marginTop: 6 }}>
+            {fullNameError}
+          </Text>
+        )}
+
       </View>
 
       {/* EMAIL */}
@@ -87,8 +184,19 @@ export default function Signup() {
           <View style={styles.iconLeft}>
             <EmailIcon />
           </View>
-          <TextInput placeholder="john@example.com" placeholderTextColor="#9CA3AF" keyboardType="email-address" style={styles.input} />
+          <TextInput value={email} onChangeText={setEmail} placeholder="john@example.com" placeholderTextColor="#9CA3AF" keyboardType="email-address" 
+          style={[
+          styles.input,
+          emailError && { borderColor: "#DC2626" }
+        ]}
+        />
         </View>
+        {emailError && (
+          <Text style={{ color: "#DC2626", fontSize: 12, marginTop: 6 }}>
+            {emailError}
+          </Text>
+        )}
+
       </View>
 
       {/* PASSWORD */}
@@ -99,7 +207,12 @@ export default function Signup() {
             <LockIcon fillColor='#9CA3AF'/>
           </View>
 
-          <TextInput value={password} onChangeText={setPassword} placeholder="Create a strong Password" placeholderTextColor="#9CA3AF" secureTextEntry={secure} style={styles.input} />
+          <TextInput value={password} onChangeText={setPassword} placeholder="Create a strong Password" placeholderTextColor="#9CA3AF" secureTextEntry={secure} 
+          style={[
+            styles.input,
+            passwordError && { borderColor: "#DC2626" }
+          ]}
+           />
 
           <Pressable
           onPress={() => setSecure(prev => !prev)}
@@ -132,6 +245,13 @@ export default function Signup() {
         <Text style={styles.helper}>
         Use 8+ characters with letters, numbers & symbols
         </Text>
+        
+        {passwordError && (
+          <Text style={{ color: "#DC2626", fontSize: 12, marginTop: 6 }}>
+            {passwordError}
+          </Text>
+        )}
+
       </View>
 
       <View style={{marginBottom: 8}}>
@@ -144,7 +264,7 @@ export default function Signup() {
         </View>
 
         <TextInput
-          value={'Entrepreneur'}
+          value={role === "ENTREPRENEUR" ? "Entrepreneur" : role === "INVESTOR" ? "Investor" : "N/A"}
           editable={false}
           style={{height: 56, paddingLeft: 44, paddingRight: 44, backgroundColor: "#F3F4F6", borderWidth: 1, borderColor: "#E5E7EB", borderRadius: 16, fontSize: 14, color: "#6B7280",}}
         />
@@ -171,16 +291,26 @@ export default function Signup() {
 
     {/* Sign Up Button */}
     <Pressable
-      onPress={() => {
-        // Handle form submission logic here
-      }}
+      onPress={handleSignup}
       style={({ pressed }) => [
         styles.signupButton,
         pressed && styles.pressed,
       ]}
     >
+      {loading ? (
+        <Feather name="loader" size={20} color="#FFFFFF" />
+      ) : (
       <Text style={{ color: "#FFFFFF", fontSize: 16, fontWeight: "600", }}>Create Account</Text>
+      )}
     </Pressable>
+
+
+    {/* Error Message */}
+    {error && (
+      <View style={{ marginTop: 16, padding: 12, backgroundColor: "#FEE2E2", borderRadius: 8, }}>
+        <Text style={{ color: "#B91C1C", fontSize: 14, }}>{error}</Text>
+      </View>
+    )}
 
 
 

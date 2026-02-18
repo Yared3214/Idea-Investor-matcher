@@ -1,11 +1,11 @@
-import { View, Text, StyleSheet } from "react-native";
 import {
   BriefcaseIcon,
   HeartIcon,
   MortarboardIcon,
-  TechnologyIcon,
   ShopIcon,
+  TechnologyIcon,
 } from "@/lib/utils/Icons";
+import { StyleSheet, Text, View } from "react-native";
 
 type Sector =
   | "FinTech"
@@ -16,6 +16,8 @@ type Sector =
 
 type CategoryBadgeProps = {
   label: Sector;
+  color: string;
+  fillColor: string;
 };
 
 const iconMap: Record<Sector, React.FC<{ size?: number; color?: string }>> = {
@@ -28,13 +30,15 @@ const iconMap: Record<Sector, React.FC<{ size?: number; color?: string }>> = {
 
 export const CategoryBadge: React.FC<CategoryBadgeProps> = ({
   label,
+  color,
+  fillColor,
 }) => {
   const IconComponent = iconMap[label] || BriefcaseIcon;
 
   return (
-    <View style={styles.container}>
-      <IconComponent size={12} color="#1D4ED8" />
-      <Text style={styles.text}>{label}</Text>
+    <View style={[styles.container, { backgroundColor: fillColor }]}>
+      <IconComponent size={12} color={color} />
+      <Text style={[styles.text, { color: color}]}>{label}</Text>
     </View>
   );
 };
@@ -46,7 +50,6 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     paddingHorizontal: 12,
     paddingVertical: 6,
-    backgroundColor: "#EFF6FF",
     borderRadius: 999,
     marginBottom: 16,
     gap: 6,
@@ -54,6 +57,5 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 12,
     fontWeight: "500",
-    color: "#1D4ED8",
   },
 });

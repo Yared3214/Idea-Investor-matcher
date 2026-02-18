@@ -3,15 +3,11 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Tabs } from 'expo-router';
 
-export default function ProtectedLayout() {
-//   const { token, loading } = useAuthStore()
-
-//   if (loading) return null
-
-//   if (!token) return <Redirect href='/login' />
+export default function Layout() {
 
   return <Tabs screenOptions={{tabBarActiveTintColor: '#4f46e5'}}>
-    <Tabs.Screen name='Ideas' options={{
+    <Tabs.Screen name='(home)' options={{
+        title: 'Ideas',
         tabBarIcon: ({color, size}) => {
             return <FontAwesome5 
             name="lightbulb" 

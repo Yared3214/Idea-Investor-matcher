@@ -2,9 +2,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { BoltIcon, EmailIcon, LockIcon } from "@/lib/utils/Icons";
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { Link, useRouter } from "expo-router";
+import { Link } from "expo-router";
 import { useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 
@@ -13,13 +13,47 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [secure, setSecure] = useState(true);
 
-  const { login } = useAuth();
-  const router = useRouter();
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
 
-  const handleLogin = async() => {
-    await login(email, password)
-    router.replace('/')
+
+  const emailRegex =
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const validate = () => {
+    let valid = true;
+  
+    // Email validation
+    if (!email) {
+      setEmailError("Email is required");
+      valid = false;
+    } else if (!emailRegex.test(email)) {
+      setEmailError("Please enter a valid email address");
+      valid = false;
+    } else {
+      setEmailError(null);
+    }
+  
+    // Password validation
+    if (!password) {
+      setPasswordError("Password is required");
+      valid = false;
+    } else {
+      setPasswordError(null);
+    }
+  
+    return valid;
   };
+  
+
+  const { login, loading, error } = useAuth();
+  const handleLogin = async () => {
+    const isValid = validate();
+    if (!isValid) return;
+  
+    await login(email.trim(), password);
+  };
+  
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
@@ -83,9 +117,17 @@ export default function Login() {
             placeholderTextColor="#9CA3AF"
             keyboardType="email-address"
             autoCapitalize="none"
-            style={styles.input}
+            style={[styles.input,
+              emailError && { borderColor: "#DC2626" }
+            ]}
           />
         </View>
+        {emailError && (
+          <Text style={{ color: "#DC2626", fontSize: 12, marginTop: 6 }}>
+            {emailError}
+          </Text>
+        )}
+
       </View>
 
       {/* PASSWORD */}
@@ -101,7 +143,9 @@ export default function Login() {
             placeholder="••••••••"
             placeholderTextColor="#9CA3AF"
             secureTextEntry={secure}
-            style={styles.input}
+            style={[styles.input,
+              passwordError && { borderColor: "#DC2626" }
+            ]}
           />
           <Pressable
           onPress={() => setSecure(prev => !prev)}
@@ -118,6 +162,12 @@ export default function Login() {
           />
         </Pressable>
         </View>
+        {passwordError && (
+          <Text style={{ color: "#DC2626", fontSize: 12, marginTop: 6 }}>
+            {passwordError}
+          </Text>
+        )}
+
       </View>
 
       {/* Forgot Password */}
@@ -131,17 +181,27 @@ export default function Login() {
 
       {/* Login Button */}
       <Pressable onPress={handleLogin} style={{ height: 52, backgroundColor: '#6366f1', borderRadius: 14, justifyContent: "center", alignItems: "center",
-          }}>        
-          <Text style={{ color: "white", fontSize: 16, fontWeight: "600" }}>
+          }}>
+            {loading ? (
+              <ActivityIndicator color="#FFFFFF" />
+            ) : (
+              <Text style={{ color: "white", fontSize: 16, fontWeight: "600" }}>
             Log In
-          </Text>
+          </Text> )              
+          }        
       </Pressable>
+
+      {error && (
+        <Text style={{ color: "red", marginTop: 12, textAlign: "center" }}>
+          {error}
+        </Text>
+      )}
 
       {/* Sign Up Link */}
       <View style={{ marginTop: 32, alignItems: "center" }}>
         <Text style={{ fontSize: 14, color: "#4B5563" }}>
           Don&apos;t have an account?{" "}
-          <Link href="/signup" style={{ textDecorationLine: "none" }}>
+          <Link href="/welcome" style={{ textDecorationLine: "none" }}>
             <Text style={{ color: "#2563EB", fontWeight: "600" }}>
               Sign up
             </Text>

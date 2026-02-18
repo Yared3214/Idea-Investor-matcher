@@ -1,3 +1,4 @@
+import { FontAwesome6 } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { CategoryBadge } from "./CategoryBadge";
@@ -8,6 +9,8 @@ type IdeaCardProps = {
   category: "FinTech" | "Healthcare" | "Education" | "Technology" | "Retail";
   amount: string;
   interested: number;
+  color: string;
+  fillColor: string;
 };
 
 export const IdeaCard: React.FC<IdeaCardProps> = ({
@@ -16,6 +19,8 @@ export const IdeaCard: React.FC<IdeaCardProps> = ({
   category,
   amount,
   interested,
+  color,
+  fillColor,
 }) => {
   return (
     <View style={styles.card}>
@@ -44,7 +49,7 @@ export const IdeaCard: React.FC<IdeaCardProps> = ({
       {/* <View style={styles.categoryBadge}>
         <Text style={styles.categoryText}>{category}</Text>
       </View> */}
-      <CategoryBadge label={category} />
+      <CategoryBadge label={category} color={color} fillColor={fillColor}/>
 
       <View style={styles.footer}>
         <View style={styles.footerItem}>
@@ -53,6 +58,14 @@ export const IdeaCard: React.FC<IdeaCardProps> = ({
         </View>
 
         <View style={styles.footerItem}>
+          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 8,}}>
+                <FontAwesome6
+                  name="eye"
+                  size={17} // text-2xl ≈ 24px
+                  color="#F59E0B" // amber-500
+                  solid
+                />
+              </View>
           <Text style={styles.amount}>{interested}</Text>
           <Text style={styles.subText}>interested</Text>
         </View>

@@ -1,18 +1,23 @@
+import { useAuth } from "@/hooks/useAuth";
 import { BoltIcon } from "@/lib/utils/Icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import {
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function EmailConfirmation() {
+interface Props {
+  email: string;
+}
+
+export default function EmailConfirmation({email}: Props) {
   const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
   const inputRefs = useRef<TextInput[]>([]); // Array of refs
   const router = useRouter();
@@ -37,13 +42,25 @@ export default function EmailConfirmation() {
     }
   };
 
-  const handleVerify = () => {
+  const { verifyEmail, resendOtp, error, loading } = useAuth();
+
+  const handleVerify = async() => {
     const code = otp.join("");
     if (code.length === 6) {
       // TODO: verify OTP with your backend
-      router.replace("/");
+      const res = await verifyEmail(email, code);
+
+      if (res.success) {
+      router.replace("/login");
+      }
     }
   };
+
+  const handleResend = async() => {
+    await resendOtp(email);
+    setOtp(["", "", "", "", "", ""]);
+    inputRefs.current[0]?.focus();
+  }
 
   return (
     <ScrollView
@@ -70,14 +87,14 @@ export default function EmailConfirmation() {
               marginBottom: 16,
             }}
           >
-            <BoltIcon />
+            <BoltIcon size={18} color="#FFFFFF"/>
           </LinearGradient>
 
           <Text style={styles.title}>Verify your email</Text>
           <Text style={styles.subtitle}>
             We sent a 6-digit code to{"\n"}
             <Text style={{ fontWeight: "600", color: "#111827" }}>
-              john@example.com
+              {email}
             </Text>
           </Text>
         </View>
@@ -115,15 +132,23 @@ export default function EmailConfirmation() {
               otp.join("").length !== 6 && styles.disabledButton,
             ]}
           >
-            <Text style={styles.buttonText}>Verify Email</Text>
+            <Text style={styles.buttonText}>{loading ? 'Verifying...' : 'Verify Email'}</Text>
           </LinearGradient>
         </Pressable>
+
+        {error && (
+          <Text style={{ color: "red", marginTop: 12, textAlign: "center" }}>
+            {error}
+          </Text>
+        )}
 
         {/* Resend & Back */}
         <View style={{ alignItems: "center", marginTop: 32, gap: 12 }}>
           <Text style={styles.resendText}>
             Didn&apos;t receive the code?{" "}
-            <Text style={styles.resendLink}>Resend code</Text>
+            <Text style={styles.resendLink} onPress={handleResend}>
+              {loading ? 'Sending...' : 'Resend OTP'}
+            </Text>
           </Text>
 
           <Pressable onPress={() => router.replace('/login')}>

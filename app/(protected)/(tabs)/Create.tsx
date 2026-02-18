@@ -2,7 +2,7 @@ import { Text, View } from "react-native";
 
 export default function CreateIdeaScreen() {
   return (
-    <View className="justify-center flex-1 p-4"> 
+    <View style={{ justifyContent: 'center', flex: 1, padding: 20}}> 
       <Text>Create Ideas</Text>
     </View>
   )

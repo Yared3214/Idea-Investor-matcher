@@ -4,9 +4,9 @@ import * as SecureStore from 'expo-secure-store'
 export type User = {
   id: string
   email: string
-  role: 'startup' | 'investor' | 'advisor'
+  role: 'ENTREPRENEUR' | 'INVESTOR' | 'ADMIN'
   name?: string
-  location?: string
+  isOnboarded?: boolean
 }
 
 type AuthState = {

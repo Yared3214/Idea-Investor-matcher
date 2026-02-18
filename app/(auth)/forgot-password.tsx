@@ -1,3 +1,4 @@
+import { useAuth } from "@/hooks/useAuth";
 import { EmailIcon, LockIcon } from "@/lib/utils/Icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -7,13 +8,37 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleResetRequest = () => {
-    if (!email) return;
-    // API call to send reset link / code
-    // Then navigate to a success screen or show message
-    // router.push("/reset-success"); // or stay and show success state
+  const emailRegex =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    const validate = () => {
+      let valid = true;
+    
+      // Email
+      if (!email) {
+        setEmailError("Email is required");
+        valid = false;
+      } else if (!emailRegex.test(email)) {
+        setEmailError("Enter a valid email address");
+        valid = false;
+      } else {
+        setEmailError(null);
+      }
+    
+      return valid;
+    };
+
+
+  const { forgotPassword, loading, error } = useAuth();
+
+  const handleResetRequest = async() => {
+    const isValid = validate();
+    if (!isValid) return;
+
+    await forgotPassword(email);
   };
 
   return (
@@ -64,9 +89,17 @@ export default function ForgotPasswordPage() {
               placeholderTextColor="#9CA3AF"
               keyboardType="email-address"
               autoCapitalize="none"
-              style={styles.input}
+              style={[
+                styles.input,
+                emailError && { borderColor: "#DC2626" }
+              ]}
             />
           </View>
+          {emailError && (
+          <Text style={{ color: "#DC2626", fontSize: 12, marginTop: 6 }}>
+            {emailError}
+          </Text>
+        )}
         </View>
 
         {/* Submit Button */}
@@ -78,8 +111,14 @@ export default function ForgotPasswordPage() {
             !email.trim() && styles.disabledButton,
           ]}
         >
-            <Text style={styles.buttonText}>Send Reset Link</Text>
+            <Text style={styles.buttonText}>{loading ? 'Sending...' : 'Send Reset Link'}</Text>
         </Pressable>
+
+        {error ? (
+          <Text style={{ color: "red", marginTop: 12, textAlign: "center" }}>
+            {error}
+          </Text>
+        ) : null}
 
         {/* Back to Login */}
         <View style={{ alignItems: "center", marginTop: 32 }}>

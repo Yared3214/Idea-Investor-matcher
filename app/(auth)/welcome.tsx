@@ -3,7 +3,7 @@ import { Link } from "expo-router";
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Path } from "react-native-svg";
-export default function Index() {
+export default function WelcomeScreen() {
   return (
     <LinearGradient
       colors={["#eef2ff", "#faf5ff"]}
@@ -27,7 +27,7 @@ export default function Index() {
       }}>
         <Image
           source={
-            require("../assets/images/landing-icon.png")
+            require("../../assets/images/landing-icon.png")
           }
           style={{ width: 100, height: 100,}}
         />
@@ -123,7 +123,12 @@ export default function Index() {
     </View>
       </View>
 
-      <Link style={styles.container} href='/signup' push asChild>
+      <Link 
+      style={styles.container} 
+      href={{
+    pathname: "/signup",
+    params: { role: "ENTREPRENEUR" },
+  }} push asChild>
             <Pressable
             onPress={() => {
               // Handle button press, e.g., navigate to another screen
@@ -143,12 +148,17 @@ export default function Index() {
           </Pressable>
             </Link>
 
+            <Link 
+      style={styles.container} 
+      href={{
+    pathname: "/signup",
+    params: { role: "INVESTOR" },
+  }} push asChild>
     <Pressable
       onPress={() => {
         // Handle button press, e.g., navigate to another screen
       }}
       style={({ pressed }) => [
-        styles.container,
         pressed && styles.pressed,
       ]}
     >
@@ -161,6 +171,7 @@ export default function Index() {
         <Text style={styles.text}>I&apos;m an Investor</Text>
       </LinearGradient>
     </Pressable>
+    </Link>
 
       <View style={{
         display: 'flex',
