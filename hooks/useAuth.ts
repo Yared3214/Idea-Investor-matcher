@@ -1,4 +1,4 @@
-import { forgotPasswordApi, loginApi, resendOtpApi, resetPasswordApi, signupApi, verifyEmailApi } from '@/lib/auth.api'
+import { forgotPasswordApi, loginApi, resendOtpApi, resetPasswordApi, signupApi, verifyEmailApi } from '@/lib/api/auth.api'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useRouter } from 'expo-router'
 import { useState } from 'react'

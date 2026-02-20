@@ -1,8 +1,12 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet } from "react-native";
+import React, { Dispatch, SetStateAction } from "react";
+import { StyleSheet, Text, TextInput, View } from "react-native";
 
-export default function StepThesis() {
-  const [value, setValue] = useState("");
+interface Props {
+  thesis: string;
+  setThesis: Dispatch<SetStateAction<string>>
+}
+
+export default function StepThesis({ thesis, setThesis}: Props) {
 
   return (
     <View>
@@ -13,8 +17,8 @@ export default function StepThesis() {
 
       <TextInput
         multiline
-        value={value}
-        onChangeText={setValue}
+        value={thesis}
+        onChangeText={setThesis}
         placeholder="Example: I invest in mission-driven fintech startups solving access to capital in emerging markets..."
         style={styles.textarea}
         textAlignVertical="top"

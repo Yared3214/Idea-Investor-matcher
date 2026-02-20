@@ -22,7 +22,12 @@ export default function ProtectedLayout() {
       <Stack.Screen
         name="onboard"
         options={{
-          presentation: "modal",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="investor"
+        options={{
           headerShown: false,
         }}
       />

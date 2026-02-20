@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Dispatch } from "react";
 import { Pressable, ScrollView, StyleSheet, Text } from "react-native";
 
 const stages = [
@@ -10,8 +10,12 @@ const stages = [
   "Series A+",
 ];
 
-export default function StepStage() {
-  const [selected, setSelected] = useState<string[]>([]);
+interface Props {
+  selected: string[];
+  setSelected: Dispatch<React.SetStateAction<string[]>>;
+}
+
+export default function StepStage({selected, setSelected}: Props) {
 
   const toggle = (value: string) => {
     if (selected.includes(value)) {

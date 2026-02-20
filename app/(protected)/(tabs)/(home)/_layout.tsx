@@ -1,10 +1,24 @@
-import { Stack } from "expo-router";
-import React from "react";
+import { useAuthStore } from "@/store/useAuthStore";
+import { Stack, useRouter } from "expo-router";
+import React, { useEffect } from "react";
 
 export default function BottomTabsLayout() {
+  const router = useRouter();
+  const { user } = useAuthStore();
+    
+  useEffect(() => {
+    if(user?.role === "INVESTOR") {
+      if(!user?.isOnboarded) {
+        router.replace("/onboard");
+      } else {
+        router.replace("/investor")
+      }
+    }
+  }, [user, router]);
   return (
     <Stack>
-      <Stack.Screen name="index" options={{ title: "Ideas", headerShown: false,}} />
+      <Stack.Screen name="index" options={{ title: "Ideas",}} />
+      <Stack.Screen name="create-idea" options={{ title: "Create Idea"}} />
     </Stack>
   );
 }

@@ -1,18 +1,22 @@
 import React from "react";
-import { View, Pressable, Text, StyleSheet } from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
 
 interface Props {
   step: number;
   totalSteps: number;
+  loading: boolean
   onNext: () => void;
   onBack: () => void;
+  complete: () => void;
 }
 
 export default function BottomNavigation({
   step,
   totalSteps,
+  loading,
   onNext,
   onBack,
+  complete,
 }: Props) {
   const isLastStep = step === totalSteps;
   const isFirstStep = step === 1;
@@ -35,17 +39,31 @@ export default function BottomNavigation({
       )}
 
       {/* Continue / Finish Button */}
+      {isLastStep ? 
       <Pressable
-        onPress={onNext}
-        style={({ pressed }) => [
-          styles.primaryButton,
-          pressed && { opacity: 0.85 },
-        ]}
-      >
-        <Text style={styles.primaryText}>
-          {isLastStep ? "Finish Setup" : "Continue"}
-        </Text>
-      </Pressable>
+      onPress={complete}
+      style={({ pressed }) => [
+        styles.primaryButton,
+        pressed && { opacity: 0.85 },
+      ]}
+    >
+      { loading ? 
+      <ActivityIndicator color="#FFFFFF" />
+    : <Text style={styles.primaryText}>
+    Finish Setup
+  </Text> }
+    </Pressable> : 
+    <Pressable
+    onPress={onNext}
+    style={({ pressed }) => [
+      styles.primaryButton,
+      pressed && { opacity: 0.85 },
+    ]}
+  >
+    <Text style={styles.primaryText}>
+    Continue
+    </Text>
+  </Pressable> }
     </View>
   );
 }
