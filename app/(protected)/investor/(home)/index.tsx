@@ -3,11 +3,11 @@ import IdeaCard from "@/components/investors/IdeaCard";
 import StatCard from "@/components/investors/StatCard";
 import React, { useState } from "react";
 import {
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
   
 
@@ -15,6 +15,7 @@ export default function IdeasScreen() {
   const [favorites, setFavorites] = useState<number[]>([]);
   const [selectedIndustry, setSelectedIndustry] = useState("All Industries");
   const [selectedFunding, setSelectedFunding] = useState("All Ranges");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleIndustrySelect = (value: string) => {
     setSelectedIndustry(value);
@@ -38,6 +39,8 @@ export default function IdeasScreen() {
       funding: "$500K",
       score: 98,
       color: ["#22C55E", "#10B981"] as [string, string],
+      categoryColor: "#16a34a",
+      categoryBackcolor: "#dcfce7",
     },
     {
       id: 2,
@@ -47,6 +50,41 @@ export default function IdeasScreen() {
       funding: "$750K",
       score: 96,
       color: ["#3B82F6", "#06B6D4"] as [string, string],
+      categoryColor: "#2563eb",
+      categoryBackcolor: "#dbeafe",
+    },
+    {
+      id: 3,
+      category: "EdTech",
+      title: "Gamified Learning Platform for Kids",
+      desc: "Interactive educational games that adapt to each child's learning pace and style.",
+      funding: "$350K",
+      score: 94,
+      color: ["#A855F7", "#EC4899"] as [string, string],
+      categoryColor: "#9333ea",
+      categoryBackcolor: "#f3e8ff",
+    },
+    {
+      id: 4,
+      category: "AI & ML",
+      title: "Automated Content Moderation Tool",
+      desc: "AI-driven solution to detect and filter harmful content across social media platforms.",
+      funding: "$1.2M",
+      score: 92,
+      color: ["#f97316", "#f59e0b"] as [string, string],
+      categoryColor: "#ea580c",
+      categoryBackcolor: "#ffedd5",
+    },
+    {
+      id: 5,
+      category: "E-commerce",
+      title: "Sustainable Fashion Marketplace",
+      desc: "Platform connecting eco-conscious consumers with ethical and sustainable fashion brands.",
+      funding: "$600k",
+      score: 90,
+      color: ["#14b8a6", "#06b6d4"] as [string, string],
+      categoryColor: "#0d9488",
+      categoryBackcolor: "#ccfbf1",
     },
   ];
 
@@ -69,8 +107,10 @@ export default function IdeasScreen() {
       </View>
 
       <FiltersSection
+        searchQuery={searchQuery}
         selectedIndustry={selectedIndustry}
         selectedFunding={selectedFunding}
+        onSearchChange={setSearchQuery}
         onIndustrySelect={handleIndustrySelect}
         onFundingSelect={handleFundingSelect}
         onReset={handleReset}

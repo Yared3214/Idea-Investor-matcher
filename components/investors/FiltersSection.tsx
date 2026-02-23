@@ -1,21 +1,31 @@
 import { Feather } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
 type Props = {
   selectedIndustry: string;
   selectedFunding: string;
+  searchQuery: string;
   onIndustrySelect: (value: string) => void;
   onFundingSelect: (value: string) => void;
+  onSearchChange: (value: string) => void;
   onReset: () => void;
 };
 
 export default function FiltersSection({
   selectedIndustry,
   selectedFunding,
+  searchQuery,
   onIndustrySelect,
   onFundingSelect,
+  onSearchChange,
   onReset,
 }: Props) {
   return (
@@ -28,6 +38,25 @@ export default function FiltersSection({
           <Pressable onPress={onReset}>
             <Text style={styles.resetText}>Reset</Text>
           </Pressable>
+        </View>
+
+        {/* ================= SEARCH BAR ================= */}
+        <View style={styles.searchWrapper}>
+          <Feather name="search" size={18} color="#94A3B8" />
+
+          <TextInput
+            placeholder="Search startups..."
+            placeholderTextColor="#94A3B8"
+            value={searchQuery}
+            onChangeText={onSearchChange}
+            style={styles.searchInput}
+          />
+
+          {searchQuery.length > 0 && (
+            <Pressable onPress={() => onSearchChange("")}>
+              <Feather name="x" size={18} color="#94A3B8" />
+            </Pressable>
+          )}
         </View>
 
         {/* Industry */}
@@ -97,7 +126,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: "#FFFFFF",
     borderRadius: 16,
-    padding: 16,
+    padding: 13,
     borderWidth: 1,
     borderColor: "#F1F5F9", // slate-100
 
@@ -133,6 +162,31 @@ const styles = StyleSheet.create({
     color: "#6366F1", // primary (indigo-500)
   },
 
+  searchWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F1F5F9",
+    borderRadius: 999,
+    paddingHorizontal: 16,
+    height: 48,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+  
+    shadowColor: "#000",
+    shadowOpacity: 0.03,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 1,
+  },
+  
+  searchInput: {
+    flex: 1,
+    marginLeft: 10,
+    fontSize: 14,
+    color: "#1E293B",
+  },
+
   /* Field wrapper (mb-3) */
   field: {
     marginBottom: 12,
@@ -154,12 +208,17 @@ const styles = StyleSheet.create({
     borderColor: "#E2E8F0", // slate-200
     borderRadius: 12,
     justifyContent: "center",
+    padding: 0,
   },
 
   /* Picker itself */
   picker: {
     height: 50,
     color: "#334155", // slate-700
+  },
+
+  pickerItem: {
+    fontSize: 13,
   },
 
   /* Chevron icon */

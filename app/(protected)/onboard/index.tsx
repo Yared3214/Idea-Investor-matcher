@@ -105,7 +105,7 @@ export default function Onboarding() {
       maxFunding:Number(maxAmount.replace(/,/g, "")),
       investmentThesis: thesis,
     };
-    console.log("onboarding data: ", data);
+    
     await investorOnboarding(data);
   }
 
