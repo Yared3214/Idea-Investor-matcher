@@ -1,4 +1,5 @@
 import { useAuthStore } from "@/store/useAuthStore";
+import { StartupResponse } from "@/types/startups";
 import Constants from 'expo-constants';
 
 const API_URL = Constants.expoConfig?.extra?.API_URL
@@ -40,4 +41,22 @@ export async function createIdeaApi(data: any) {
         const errorData = await res.json()
         throw new Error(errorData.message || 'Failed to create Ideas')
     }
+}
+
+export async function getMyStartupsApi() {
+    const token = useAuthStore.getState().token;
+
+    const res = await fetch(`${API_URL}/entrepreneur/ideas`,{
+        headers: { Authorization: `Bearer ${token}`}
+    });
+
+    if (res.status === 200) {
+            return Promise.resolve({ success: true, data: await res.json() }) as Promise<{ 
+                success: boolean;
+                data: StartupResponse[]
+                }>;
+        } else {
+            const errorData = await res.json()
+            throw new Error(errorData.message || 'Failed to fetch Startups')
+        }
 }

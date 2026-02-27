@@ -1,31 +1,36 @@
+import { startupMap } from "@/lib/utils/startupMap";
+import { StartupResponse } from "@/types/startups";
 import { FontAwesome6 } from "@expo/vector-icons";
+import { router } from "expo-router";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { CategoryBadge } from "./CategoryBadge";
 
 type IdeaCardProps = {
-  title: string;
+  item: StartupResponse;
   status: "Active" | "Draft";
-  category: "FinTech" | "Healthcare" | "Education" | "Technology" | "Retail";
-  amount: string;
   interested: number;
-  color: string;
-  fillColor: string;
 };
 
 export const IdeaCard: React.FC<IdeaCardProps> = ({
-  title,
+  item,
   status,
-  category,
-  amount,
   interested,
-  color,
-  fillColor,
 }) => {
+  const category = startupMap[item.industry].category;
+  const color = startupMap[item.industry].categoryColor;
+  const fillColor = startupMap[item.industry].categoryBackcolor
   return (
-    <View style={styles.card}>
+    <Pressable 
+    onPress={() => router.push({
+      pathname: '/idea-detail',
+      params: { 
+        id: item.id
+      },
+    })}
+    style={styles.card}>
       <View style={styles.headerRow}>
-        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.title}>{item.pitchTitle}</Text>
 
         <View
           style={[
@@ -53,7 +58,7 @@ export const IdeaCard: React.FC<IdeaCardProps> = ({
 
       <View style={styles.footer}>
         <View style={styles.footerItem}>
-          <Text style={styles.amount}>{amount}</Text>
+        <Text style={styles.amount}>{item.fundingAmount.toLocaleString('en-US', { style: 'currency', currency: 'ETB' })}</Text>
           <Text style={styles.subText}>needed</Text>
         </View>
 
@@ -70,7 +75,7 @@ export const IdeaCard: React.FC<IdeaCardProps> = ({
           <Text style={styles.subText}>interested</Text>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
 

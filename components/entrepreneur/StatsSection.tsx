@@ -1,7 +1,12 @@
 import { FontAwesome6 } from "@expo/vector-icons";
 import { StyleSheet, Text, View } from "react-native";
 
-export const StatsSection = () => (
+interface Props {
+  totalStartups: number;
+  totalInterests: number; 
+}
+
+export const StatsSection = ({totalStartups, totalInterests}: Props) => (
     
     <View style={{ flexDirection: "row", gap: 12, marginBottom: 20 }}>
       <View style={statStyles.card}>
@@ -13,8 +18,8 @@ export const StatsSection = () => (
         solid
       />
     </View>
-        <Text style={statStyles.number}>12</Text>
-        <Text style={statStyles.label}>Total Ideas</Text>
+        <Text style={statStyles.number}>{totalStartups}</Text>
+        <Text style={statStyles.label}>Total Startups</Text>
       </View>
   
       <View style={statStyles.card}>
@@ -26,7 +31,7 @@ export const StatsSection = () => (
         solid
       />
     </View>
-        <Text style={statStyles.number}>247</Text>
+        <Text style={statStyles.number}>{totalInterests}</Text>
         <Text style={statStyles.label}>Total Interest</Text>
       </View>
     </View>

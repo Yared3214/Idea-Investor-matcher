@@ -1,11 +1,16 @@
-import { FilterSection } from "@/components/FilterSection";
-import { IdeaCard } from "@/components/IdeaCard";
-import { StatsSection } from "@/components/StatsSection";
+import EmptyState from "@/components/EmptyState";
+import { FilterSection } from "@/components/entrepreneur/FilterSection";
+import { IdeaCard } from "@/components/entrepreneur/IdeaCard";
+import { StatsSection } from "@/components/entrepreneur/StatsSection";
+import ErrorState from "@/components/ErrorState";
+import IdeaCardSkeleton from "@/components/IdeaCardSkeleton";
+import { useEntrepreneur } from "@/hooks/useEntrepreneur";
+import { useStartupStore } from "@/store/startupStore";
 import { FilterType } from "@/types/filter";
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Pressable,
   ScrollView,
@@ -13,11 +18,29 @@ import {
   View,
 } from "react-native";
 
+const startupMap: Record<string, {
+  color: string;
+  fillColor: string;
+}> = {
+  
+}
+
 export default function IdeasScreen() {
   const [selectedFilter, setSelectedFilter] =
     useState<FilterType>("All");
 
+  const startups = useStartupStore((state)=>state.startups);
+
   const router = useRouter();
+
+  const { getMyStartups, loading, error } = useEntrepreneur()
+  useEffect(() => {
+    const fetchStartups = async() => {
+     await getMyStartups();
+    }
+
+    fetchStartups();
+  },[getMyStartups])
 
   return (
     <View style={{ flex: 1 }}>
@@ -25,42 +48,43 @@ export default function IdeasScreen() {
         style={{ flex: 1, backgroundColor: "#F9FAFB" }}
         contentContainerStyle={{ padding: 20, paddingBottom: 120 }}
       >
-        <StatsSection />
+        <StatsSection 
+        totalStartups={startups.length}
+        totalInterests={42*startups.length}/>
 
         <FilterSection
           selected={selectedFilter}
           onSelect={setSelectedFilter}
         />
 
-        <IdeaCard
-          title="AI-Powered Personal Finance Assistant"
-          status="Active"
-          category="FinTech"
-          amount="$500K"
-          interested={42}
-          color="#9333ea"
-          fillColor="#faf5ff"
-        />
+        {loading && (
+          <>
+            <IdeaCardSkeleton />
+            <IdeaCardSkeleton />
+            <IdeaCardSkeleton />
+          </>
+        )}
 
-        <IdeaCard
-          title="Smart Home Energy Optimizer"
-          status="Active"
-          category="Technology"
-          amount="$750K"
-          interested={68}
-          fillColor="#EFF6FF"
-          color="#1D4ED8"
-        />
+        {error && !loading && (
+          <ErrorState
+            message={error}
+            onRetry={() => getMyStartups()}
+          />
+        )}
 
-        <IdeaCard
-          title="Telemedicine Platform for Rural Areas"
-          status="Active"
-          category="Healthcare"
-          amount="$1.2M"
-          interested={35}
-          color="#16a34a"
-          fillColor="#f0fdf4"
-        />
+        {!loading && !error && startups.length === 0 && (
+          <EmptyState />
+        )}
+
+        {!loading && !error && startups.length > 0 && 
+          startups.map((item, index) => (
+            <IdeaCard 
+            key={index}
+            item={item}
+            status="Active"
+            interested={42}
+            />
+          ))}
       </ScrollView>
 
       {/* Floating Add Button */}

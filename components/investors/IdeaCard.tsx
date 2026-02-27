@@ -1,30 +1,34 @@
+import { startupMap } from "@/lib/utils/startupMap";
+import { StartupResponse } from "@/types/startups";
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 interface Props {
-    item: {
-        id: number;
-        category: string;
-        title: string;
-        desc: string;
-        funding: string;
-        score: number;
-        color: [string, string, ...string[]];
-        categoryColor: string;
-        categoryBackcolor: string;
-    };
+    item: StartupResponse;
     isFav: boolean;
     onFav: () => void;
+    rank: number;
 }
 
-export default function IdeaCard({ item, isFav, onFav }: Props) {
+export default function IdeaCard({ 
+  item, 
+  isFav, 
+  onFav,
+  rank,
+}: Props) {
+  const color = startupMap[item.industry].color;
+  const categoryColor = startupMap[item.industry].categoryColor;
+  const categoryBackcolor = startupMap[item.industry].categoryBackcolor;
+  const category = startupMap[item.industry].category;
+
     return (
       <View style={styles.card}>
       
       {/* Left Gradient Bar */}
       <LinearGradient
-        colors={item.color}
+        colors={color}
         style={styles.gradientBar}
       />
 
@@ -34,20 +38,20 @@ export default function IdeaCard({ item, isFav, onFav }: Props) {
           
           {/* Badge + Rank */}
           <View style={styles.badgeRow}>
-            <View style={[styles.badge, {backgroundColor: item.categoryBackcolor}]}>
-              <Text style={[styles.badgeText, {color: item.categoryColor}]}>{item.category}</Text>
+            <View style={[styles.badge, {backgroundColor: categoryBackcolor}]}>
+              <Text style={[styles.badgeText, {color: categoryColor}]}>{category}</Text>
             </View>
-            <Text style={styles.rank}>#{item.id}</Text>
+            <Text style={styles.rank}>#{rank}</Text>
           </View>
 
           {/* Title */}
           <Text style={styles.title}>
-            {item.title}
+            {item.startupName}
           </Text>
 
           {/* Description */}
           <Text style={styles.description}>
-            {item.desc}
+            {item.pitchTitle}
           </Text>
         </View>
 
@@ -67,7 +71,7 @@ export default function IdeaCard({ item, isFav, onFav }: Props) {
           {/* Funding */}
           <View>
             <Text style={styles.statLabel}>Funding Need</Text>
-            <Text style={styles.statValue}>{item.funding}</Text>
+            <Text style={styles.statValue}>{item.fundingAmount.toLocaleString('en-US', { style: 'currency', currency: 'ETB' })}</Text>
           </View>
 
           {/* Vertical Divider */}
@@ -80,23 +84,30 @@ export default function IdeaCard({ item, isFav, onFav }: Props) {
             <View style={styles.matchRow}>
               <View style={styles.progressBar}>
                 <LinearGradient
-                  colors={item.color}
+                  colors={color}
                   style={[
                     styles.progressFill,
-                    { width: `${item.score}%` },
+                    { width: `94%` },
                   ]}
                 />
               </View>
 
-              <Text style={[styles.matchScoreText, {color: item.categoryColor}]}>
-                {item.score}
+              <Text style={[styles.matchScoreText, {color: categoryColor}]}>
+                {94}
               </Text>
             </View>
           </View>
         </View>
 
         {/* View Button */}
-        <Pressable style={styles.viewBtn}>
+        <Pressable 
+        onPress={() => router.push({
+          pathname: "/investor/idea-details",
+          params: {
+            id: item.id
+          }
+        })}
+        style={styles.viewBtn}>
           <Text style={styles.viewText}>View</Text>
         </Pressable>
       </View>

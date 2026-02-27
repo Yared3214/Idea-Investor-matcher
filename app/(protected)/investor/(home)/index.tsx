@@ -1,7 +1,13 @@
+import EmptyState from "@/components/EmptyState";
+import ErrorState from "@/components/ErrorState";
+import IdeaCardSkeleton from "@/components/IdeaCardSkeleton";
 import FiltersSection from "@/components/investors/FiltersSection";
 import IdeaCard from "@/components/investors/IdeaCard";
 import StatCard from "@/components/investors/StatCard";
-import React, { useState } from "react";
+import { useInvestor } from "@/hooks/useInvestor";
+import { startupMap } from "@/lib/utils/startupMap";
+import { useStartupStore } from "@/store/startupStore";
+import React, { useEffect, useState } from "react";
 import {
   Pressable,
   ScrollView,
@@ -12,10 +18,22 @@ import {
   
 
 export default function IdeasScreen() {
-  const [favorites, setFavorites] = useState<number[]>([]);
+  const [favorites, setFavorites] = useState<string[]>([]);
   const [selectedIndustry, setSelectedIndustry] = useState("All Industries");
   const [selectedFunding, setSelectedFunding] = useState("All Ranges");
   const [searchQuery, setSearchQuery] = useState("");
+
+  const startups = useStartupStore((state) => state.startups);
+
+  const { getStartups, error, loading } = useInvestor();
+  
+    useEffect(() => {
+      const fetchStartups = async() => {
+        await getStartups();
+      }
+
+      fetchStartups();
+    },[getStartups])
 
   const handleIndustrySelect = (value: string) => {
     setSelectedIndustry(value);
@@ -30,71 +48,50 @@ export default function IdeasScreen() {
     setSelectedFunding("All Ranges");
   };
 
-  const ideas = [
-    {
-      id: 1,
-      category: "FinTech",
-      title: "AI-Powered Personal Finance Assistant",
-      desc: "Smart budgeting app using ML to predict expenses.",
-      funding: "$500K",
-      score: 98,
-      color: ["#22C55E", "#10B981"] as [string, string],
-      categoryColor: "#16a34a",
-      categoryBackcolor: "#dcfce7",
-    },
-    {
-      id: 2,
-      category: "HealthTech",
-      title: "Telemedicine Platform for Rural Areas",
-      desc: "Video consultations for underserved communities.",
-      funding: "$750K",
-      score: 96,
-      color: ["#3B82F6", "#06B6D4"] as [string, string],
-      categoryColor: "#2563eb",
-      categoryBackcolor: "#dbeafe",
-    },
-    {
-      id: 3,
-      category: "EdTech",
-      title: "Gamified Learning Platform for Kids",
-      desc: "Interactive educational games that adapt to each child's learning pace and style.",
-      funding: "$350K",
-      score: 94,
-      color: ["#A855F7", "#EC4899"] as [string, string],
-      categoryColor: "#9333ea",
-      categoryBackcolor: "#f3e8ff",
-    },
-    {
-      id: 4,
-      category: "AI & ML",
-      title: "Automated Content Moderation Tool",
-      desc: "AI-driven solution to detect and filter harmful content across social media platforms.",
-      funding: "$1.2M",
-      score: 92,
-      color: ["#f97316", "#f59e0b"] as [string, string],
-      categoryColor: "#ea580c",
-      categoryBackcolor: "#ffedd5",
-    },
-    {
-      id: 5,
-      category: "E-commerce",
-      title: "Sustainable Fashion Marketplace",
-      desc: "Platform connecting eco-conscious consumers with ethical and sustainable fashion brands.",
-      funding: "$600k",
-      score: 90,
-      color: ["#14b8a6", "#06b6d4"] as [string, string],
-      categoryColor: "#0d9488",
-      categoryBackcolor: "#ccfbf1",
-    },
-  ];
-
-  const toggleFavorite = (id: number) => {
+  const toggleFavorite = (id: string) => {
     setFavorites(prev =>
       prev.includes(id)
         ? prev.filter(i => i !== id)
         : [...prev, id]
     );
   };
+
+  const parseFundingRange = (range: string) => {
+    if (range === "All Ranges") return null;
+  
+    if (range === "$5M+") return { min: 5_000_000, max: Infinity };
+  
+    const cleaned = range.replace(/\ETB/g, "").replace(/K/g, "000").replace(/M/g, "000000");
+    const [minStr, maxStr] = cleaned.split(" - ");
+  
+    return {
+      min: Number(minStr),
+      max: Number(maxStr),
+    };
+  };
+
+  const filteredStartups = startups.filter((startup) => {
+    // 🔍 Search Filter
+    const matchesSearch =
+      searchQuery.trim() === "" ||
+      startup.pitchTitle
+        ?.toLowerCase()
+        .includes(searchQuery.toLowerCase());
+  
+    // 🏭 Industry Filter
+    const matchesIndustry =
+      selectedIndustry === "All Industries" ||
+      startupMap[startup.industry].category === selectedIndustry;
+  
+    // 💰 Funding Filter
+    const range = parseFundingRange(selectedFunding);
+    const matchesFunding =
+      !range ||
+      (startup.fundingAmount >= range.min &&
+        startup.fundingAmount <= range.max);
+  
+    return matchesSearch && matchesIndustry && matchesFunding;
+  });
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 30 }}>
@@ -121,17 +118,41 @@ export default function IdeasScreen() {
       {/* Top Matches Header */}
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Top Matches</Text>
-        <Text style={styles.sectionSub}>24 results</Text>
+        <Text style={styles.sectionSub}>
+          {filteredStartups.length} results
+        </Text>
       </View>
 
       {/* Idea Cards */}
-      {ideas.map(item => (
-        <IdeaCard
-          key={item.id}
-          item={item}
-          isFav={favorites.includes(item.id)}
-          onFav={() => toggleFavorite(item.id)}
+
+      {loading && (
+        <>
+          <IdeaCardSkeleton />
+          <IdeaCardSkeleton />
+          <IdeaCardSkeleton />
+        </>
+      )}
+
+      {error && !loading && (
+        <ErrorState
+          message={error}
+          onRetry={() => getStartups()}
         />
+      )}
+
+      {!loading && !error && filteredStartups.length === 0 && (
+        <EmptyState />
+      )}
+
+      {!loading && !error && startups.length > 0 &&
+        filteredStartups.map((item, index) => (
+          <IdeaCard
+            key={index}
+            rank={index+1}
+            item={item}
+            isFav={favorites.includes(item.id)}
+            onFav={() => toggleFavorite(item.id)}
+          />
       ))}
 
       {/* Load More */}

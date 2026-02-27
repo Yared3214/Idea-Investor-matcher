@@ -5,7 +5,7 @@ import StepIndustryGeo from "@/components/StepIndustryGeo";
 import StepStage from "@/components/StepStage";
 import StepThesis from "@/components/StepThesis";
 import { useInvestor } from "@/hooks/useInvestor";
-import { InvestorOnboardingData } from "@/types/investorOnboarding";
+import { InvestorOnboardingData } from "@/types/investor";
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";

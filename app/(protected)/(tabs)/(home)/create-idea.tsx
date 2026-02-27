@@ -5,7 +5,7 @@ import StepBasicInfo from "@/components/create-idea/StepBasicInfo";
 import StepFunding from "@/components/create-idea/StepFunding";
 import StepProgress from "@/components/create-idea/StepProgress";
 import { useEntrepreneur } from "@/hooks/useEntrepreneur";
-import { CreateStartupData } from "@/types/createStartup";
+import { CreateStartupData } from "@/types/entrepreneur";
 import { DocumentPickerAsset } from "expo-document-picker";
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
@@ -16,8 +16,8 @@ const stageMap: Record<string, string> = {
   "Prototype": "PROTOTYPE",
   "mvp": "MVP",
   "revenue": "EARLY_REVENUE",
-  "Scaling": "SCALING",
-  "scaling": "SERIES_A",
+  "scaling": "SCALING",
+  "series_a": "SERIES_A",
 };
 
 const industryMap: Record<string, string> = {
@@ -26,7 +26,7 @@ const industryMap: Record<string, string> = {
   "FinTech": "FINTECH",
   "Renewable Energy": "ENERGY",
   "AI/SaaS": "AI",
-  "E-commerce": "ECOMMERCE",
+  "ECommerce": "ECOMMERCE",
   "EdTech": "EDTECH",
   "AgriTech": "AGRITECH",
   "Food & Beverage": "FOOD_AND_BEVERAGE",

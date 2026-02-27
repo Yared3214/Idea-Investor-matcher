@@ -72,9 +72,8 @@ export default function FiltersSection({
               <Picker.Item label="FinTech" value="FinTech" />
               <Picker.Item label="HealthTech" value="HealthTech" />
               <Picker.Item label="EdTech" value="EdTech" />
-              <Picker.Item label="AI & ML" value="AI & ML" />
-              <Picker.Item label="E-commerce" value="E-commerce" />
-              <Picker.Item label="SaaS" value="SaaS" />
+              <Picker.Item label="AI & ML" value="AI/SaaS" />
+              <Picker.Item label="E-commerce" value="ECommerce" />
             </Picker>
 
             <Feather
@@ -96,11 +95,11 @@ export default function FiltersSection({
               style={styles.picker}
             >
               <Picker.Item label="All Ranges" value="All Ranges" />
-              <Picker.Item label="$0 - $50K" value="$0 - $50K" />
-              <Picker.Item label="$50K - $250K" value="$50K - $250K" />
-              <Picker.Item label="$250K - $1M" value="$250K - $1M" />
-              <Picker.Item label="$1M - $5M" value="$1M - $5M" />
-              <Picker.Item label="$5M+" value="$5M+" />
+              <Picker.Item label="ETB 0 - 50K" value="ETB 0 - 50K" />
+              <Picker.Item label="ETB 50K - 250K" value="ETB 50K - 250K" />
+              <Picker.Item label="ETB 250K - 1M" value="ETB 250K - 1M" />
+              <Picker.Item label="ETB 1M - 5M" value="ETB 1M - 5M" />
+              <Picker.Item label="ETB 5M+" value="ETB 5M+" />
             </Picker>
 
             <Feather

@@ -19,6 +19,7 @@ export default function BottomTabsLayout() {
     <Stack>
       <Stack.Screen name="index" options={{ title: "Ideas",}} />
       <Stack.Screen name="create-idea" options={{ title: "Create Idea"}} />
+      <Stack.Screen name="idea-detail" options={{ title: "Idea Details"}} />
     </Stack>
   );
 }

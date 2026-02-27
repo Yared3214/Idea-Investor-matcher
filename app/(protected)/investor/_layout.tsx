@@ -6,7 +6,7 @@ export default function Layout() {
 
   return <Tabs screenOptions={{tabBarActiveTintColor: '#4f46e5'}}>
     <Tabs.Screen name='(home)' options={{
-        title: 'Startup Matches',
+       headerShown: false,
         tabBarIcon: ({color, size}) => {
             return <FontAwesome5 
             name="lightbulb" 

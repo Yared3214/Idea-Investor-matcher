@@ -7,20 +7,13 @@ import {
 } from "@/lib/utils/Icons";
 import { StyleSheet, Text, View } from "react-native";
 
-type Sector =
-  | "FinTech"
-  | "Healthcare"
-  | "Education"
-  | "Technology"
-  | "Retail";
-
 type CategoryBadgeProps = {
-  label: Sector;
+  label: string;
   color: string;
   fillColor: string;
 };
 
-const iconMap: Record<Sector, React.FC<{ size?: number; color?: string }>> = {
+const iconMap: Record<string, React.FC<{ size?: number; color?: string }>> = {
   FinTech: BriefcaseIcon,
   Healthcare: HeartIcon,
   Education: MortarboardIcon,
