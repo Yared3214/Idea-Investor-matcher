@@ -1,36 +1,16 @@
-import BottomCTA from "@/components/create-idea/BottomCTA";
-import IdeaDescriptionStep from "@/components/create-idea/IdeaDescriptionStep";
-import IdeaDetails from "@/components/create-idea/IdeaDetails";
-import StepBasicInfo from "@/components/create-idea/StepBasicInfo";
-import StepFunding from "@/components/create-idea/StepFunding";
-import StepProgress from "@/components/create-idea/StepProgress";
+import BottomCTA from "@/components/entrepreneur/create-idea/BottomCTA";
+import IdeaDescriptionStep from "@/components/entrepreneur/create-idea/IdeaDescriptionStep";
+import IdeaDetails from "@/components/entrepreneur/create-idea/IdeaDetails";
+import StepBasicInfo from "@/components/entrepreneur/create-idea/StepBasicInfo";
+import StepFunding from "@/components/entrepreneur/create-idea/StepFunding";
+import StepProgress from "@/components/entrepreneur/create-idea/StepProgress";
 import { useEntrepreneur } from "@/hooks/useEntrepreneur";
+import { mapIndustry, mapStage } from "@/lib/utils/startupMap";
 import { CreateStartupData } from "@/types/entrepreneur";
 import { DocumentPickerAsset } from "expo-document-picker";
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-const stageMap: Record<string, string> = {
-  "idea": "IDEA_STAGE",
-  "Prototype": "PROTOTYPE",
-  "mvp": "MVP",
-  "revenue": "EARLY_REVENUE",
-  "scaling": "SCALING",
-  "series_a": "SERIES_A",
-};
-
-const industryMap: Record<string, string> = {
-  "Technology": "TECHNOLOGY",
-  "HealthTech": "HEALTHCARE",
-  "FinTech": "FINTECH",
-  "Renewable Energy": "ENERGY",
-  "AI/SaaS": "AI",
-  "ECommerce": "ECOMMERCE",
-  "EdTech": "EDTECH",
-  "AgriTech": "AGRITECH",
-  "Food & Beverage": "FOOD_AND_BEVERAGE",
-}
 
 
 
@@ -121,10 +101,9 @@ export default function CreateIdeaScreen() {
 
   const { createIdea, error, loading } = useEntrepreneur();
 
-  const mappedIndustry = industryMap[selectedIndustry] || "";
-  const mappedStage = stageMap[selectedStage] || "";
-
   const submit = async() => {
+    const mappedIndustry = mapIndustry[selectedIndustry] || "";
+    const mappedStage = mapStage[selectedStage] || "";
     const data: CreateStartupData = {
       startupName,
       industry: mappedIndustry,

@@ -1,11 +1,11 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
 } from 'react-native';
-import Editor from '../dom-components/hello-dom';
+import Editor from '../../dom-components/hello-dom';
 import StepHeader from './StepHeader';
 // import your RichTextEditor here
 

@@ -92,3 +92,24 @@ export const stageMap: Record<string, {
     icon: "rocket",
   },
 } 
+
+export const mapStage: Record<string, string> = {
+  "Idea Phase": "IDEA_STAGE",
+  "Prototype": "PROTOTYPE",
+  "MVP": "MVP",
+  "Early Revenue": "EARLY_REVENUE",
+  "Scaling": "SCALING",
+  "Series A": "SERIES_A",
+};
+
+export const mapIndustry: Record<string, string> = {
+  "Technology": "TECHNOLOGY",
+  "HealthTech": "HEALTHCARE",
+  "FinTech": "FINTECH",
+  "Renewable Energy": "ENERGY",
+  "AI/SaaS": "AI",
+  "ECommerce": "ECOMMERCE",
+  "EdTech": "EDTECH",
+  "AgriTech": "AGRITECH",
+  "Food & Beverage": "FOOD_AND_BEVERAGE",
+}

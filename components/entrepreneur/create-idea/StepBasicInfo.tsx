@@ -24,36 +24,37 @@ const industries = [
 
 const stages = [
   {
-    key: "idea",
     title: "Idea Phase",
     subtitle: "Concept only, no product yet",
     icon: "zap",
     color: "#2563EB",
   },
   {
-    key: "mvp",
-    title: "MVP / Prototype",
+    title: "Prototype",
     subtitle: "Functional product built",
     icon: "box",
     color: "#6366F1",
   },
   {
-    key: "revenue",
+    title: "MVP",
+    subtitle: "Functional product built",
+    icon: "box",
+    color: "#6366F1",
+  },
+  {
     title: "Early Revenue",
     subtitle: "Generating initial sales",
     icon: "trending-up",
     color: "#16A34A",
   },
   {
-    key: "series_a",
     title: "Series A",
     subtitle: "Institutional funding raised",
     icon: "bar-chart-2",
     color: "#F59E0B",
   },
   {
-    key: "scaling",
-    title: "Scaling (Series B+)",
+    title: "Scaling",
     subtitle: "Rapid growth & expansion",
     icon: "activity",
     color: "#DC2626",
@@ -157,12 +158,12 @@ export default function StepBasicInfo({
             <Text style={styles.label}>Current Stage</Text>
 
             {stages.map((stage) => {
-              const selected = selectedStage === stage.key;
+              const selected = selectedStage === stage.title;
 
               return (
                 <Pressable
-                  key={stage.key}
-                  onPress={() => setSelectedStage(stage.key)}
+                  key={stage.title}
+                  onPress={() => setSelectedStage(stage.title)}
                   style={[
                     styles.stageCard,
                     selected && {

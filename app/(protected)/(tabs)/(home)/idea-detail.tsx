@@ -1,18 +1,22 @@
 import { useEntrepreneur } from "@/hooks/useEntrepreneur";
 import { stageMap, startupMap } from "@/lib/utils/startupMap";
 import { useStartupStore } from "@/store/startupStore";
+import { FontAwesome6 } from "@expo/vector-icons";
 import { formatDistanceToNow } from 'date-fns';
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import {
+  Alert,
   FlatList,
   Image,
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   useWindowDimensions,
   View,
 } from "react-native";
+
 import RenderHTML from "react-native-render-html";
 
 const investors = [
@@ -45,6 +49,8 @@ export default function IdeaDetailsScreen() {
   const startup = useStartupStore((state)=>state.selectedStartup);
   const { id } = useLocalSearchParams<{ id?: string }>();
   const { width } = useWindowDimensions();
+  const router = useRouter();
+
 
   const category = startup?.industry ? startupMap[startup?.industry].category : undefined;
   const categoryColor = startup?.industry ? startupMap[startup?.industry].categoryColor : undefined;
@@ -65,6 +71,38 @@ export default function IdeaDetailsScreen() {
       addSuffix: true,
     });
 
+    const handleUpdate = () => {
+      if (!startup?.id) return;
+      router.push({
+        pathname: '/update-idea',
+        params: {
+          id: startup.id,
+        }
+      });
+    };
+
+    const { deleteIdea, loading, error } = useEntrepreneur();
+    const handleDelete = () => {
+      if (!startup?.id) return;
+    
+      Alert.alert(
+        "Delete Startup",
+        "Are you sure you want to delete this startup? This action cannot be undone.",
+        [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: "Delete",
+            style: "destructive",
+            onPress: async () => {
+              await deleteIdea(startup.id);
+              console.error(error)
+              router.back();
+            },
+          },
+        ]
+      );
+    };
+
     
     
   return (
@@ -80,6 +118,24 @@ export default function IdeaDetailsScreen() {
             <Text style={styles.activeText}>Active</Text>
           </View>
           <Text style={styles.updatedText}>Updated {timeAgo}</Text>
+        </View>
+
+        <View style={styles.actionRow}>
+          <TouchableOpacity
+            style={styles.updateButton}
+            onPress={handleUpdate}
+          >
+            <FontAwesome6 name="pen" size={14} color="#4F46E5" />
+            <Text style={styles.updateText}>Update</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={handleDelete}
+          >
+            <FontAwesome6 name="trash" size={14} color="#DC2626" />
+            <Text style={styles.deleteText}>Delete</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Industry */}
@@ -246,6 +302,43 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#6B7280",
     marginLeft: 8,
+  },
+  actionRow: {
+    flexDirection: "row",
+    marginTop: 12,
+    gap: 12,
+  },
+  
+  updateButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    backgroundColor: "#EEF2FF",
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+  },
+  
+  updateText: {
+    color: "#4F46E5",
+    fontWeight: "600",
+    fontSize: 13,
+  },
+  
+  deleteButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    backgroundColor: "#FEE2E2",
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+  },
+  
+  deleteText: {
+    color: "#DC2626",
+    fontWeight: "600",
+    fontSize: 13,
   },
   sectionLabel: {
     fontSize: 13,

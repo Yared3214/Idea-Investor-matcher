@@ -15,7 +15,7 @@ export default function BottomCTA({onNext, submit, loading, step}: Props) {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['rgba(255,255,255,0)', '#ffffff', '#ffffff']}
+        colors={["rgba(249,250,251,0)", "#F9FAFB", "#F9FAFB"]}
         style={styles.gradient}
       >
         {isLastStep? 

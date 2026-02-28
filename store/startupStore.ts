@@ -62,6 +62,7 @@ export const useStartupStore = create<StartupState>((set, get) => ({
         startups: state.startups.map((s) =>
           s.id === id ? updated : s
         ),
+        selectedStartup: state.selectedStartup?.id === id ? updated : state.selectedStartup,
         loading: false,
       }));
   },
@@ -71,6 +72,7 @@ export const useStartupStore = create<StartupState>((set, get) => ({
       set((state) => ({
         startups: state.startups.filter((s) => s.id !== id),
         loading: false,
+        selectedStartup: null,
       }));
   },
 
